@@ -1,0 +1,82 @@
+#1
+
+
+SELECT *
+FROM product.users
+WHERE gender LIKE 'm' AND lang NOT LIKE 'ru' AND lang NOT LIKE 'es'
+
+
+#2
+
+SELECT 100 - (COUNT(CASE WHEN session_number = 0 THEN 1 ELSE NULL END) -
+             COUNT(CASE WHEN session_number = 1 THEN 1 ELSE NULL END)) /
+             COUNT(CASE WHEN session_number = 0 THEN 1 ELSE NULL END) * 100
+FROM user_session_end
+
+
+
+#3
+
+
+SELECT 100 - (COUNT(CASE WHEN session_number = 0 THEN 1 ELSE NULL END) -
+             COUNT(CASE WHEN session_number = 3 THEN 1 ELSE NULL END)) /
+             COUNT(CASE WHEN session_number = 0 THEN 1 ELSE NULL END) * 100
+FROM user_session_end
+
+#4
+
+SELECT COUNT(CASE WHEN session_number != 0 THEN 1 ELSE NULL END)/COUNT(CASE WHEN session_number = 0 THEN 1 ELSE NULL END)
+FROM user_session_end
+
+#5
+
+
+SELECT 100 - (COUNT(users.id) -
+             COUNT(CASE WHEN user_session_end.session_number = 3 THEN 1 ELSE NULL END)) /
+             COUNT(users.id) * 100 ,
+       user_session_end.user_id, users.id, users.gender, users.device_type
+FROM user_session_end
+LEFT JOIN users on user_session_end.user_id = users.id
+GROUP BY users.gender, users.device_type, user_session_end.user_id, users.id
+ORDER BY (100 - (COUNT(users.id) -
+             COUNT(CASE WHEN user_session_end.session_number = 3 THEN 1 ELSE NULL END)) /
+             COUNT(users.id) * 100) desc
+
+
+
+
+#6
+
+
+SELECT 100 - (COUNT(users.id) -
+             COUNT(CASE WHEN user_session_end.session_number = 3 THEN 1 ELSE NULL END)) /
+             COUNT(users.id) * 100 ,
+       user_session_end.user_id, users.id, users.gender, users.device_type, users.lang
+FROM user_session_end
+LEFT JOIN users on user_session_end.user_id = users.id
+WHERE users.lang like 'en'
+GROUP BY users.gender, users.device_type, user_session_end.user_id, users.id, users.lang
+ORDER BY (100 - (COUNT(users.id) -
+             COUNT(CASE WHEN user_session_end.session_number = 3 THEN 1 ELSE NULL END)) /
+             COUNT(users.id) * 100) desc
+
+#7.1
+
+
+SELECT count(contact_id) as Кількість_повідомлень, user_app
+from activities
+
+group by user_app
+
+
+#7.2
+
+select COUNT(DISTINCT contact_id) - count(DISTINCT user_id) as кількість_чатів ,user_app
+from(select distinct user_id, contact_id, user_app
+from activities
+   ) as y
+group by  user_app
+
+#8
+
+
